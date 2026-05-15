@@ -42,7 +42,15 @@ export default function Home() {
     const durations = [
       ...new Set(internships.map((i) => i.duration).filter(Boolean)),
     ].sort();
-    return { durations };
+    const profiles = [
+      ...new Set(internships.map((i) => i.profile_name).filter(Boolean)),
+    ].sort();
+    const locations = [
+      ...new Set(
+        internships.flatMap((i) => i.location_names || []).filter(Boolean)
+      ),
+    ].sort();
+    return { durations, profiles, locations };
   }, [internships]);
 
   const filtered = useMemo(() => {
@@ -51,10 +59,8 @@ export default function Home() {
         const kw = filters.keyword.toLowerCase();
         const inTitle = item.title?.toLowerCase().includes(kw);
         const inProfile = item.profile_name?.toLowerCase().includes(kw);
-        const inSkills = (item.skill_criteria || []).some((s) =>
-          s.toLowerCase().includes(kw)
-        );
-        if (!inTitle && !inProfile && !inSkills) return false;
+        const inCompany = item.company_name?.toLowerCase().includes(kw);
+        if (!inTitle && !inProfile && !inCompany) return false;
       }
       if (
         filters.profile &&
@@ -102,9 +108,17 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: "#F5F5F5" }}>
       <Header />
 
-      <div style={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #EEEEEE" }}>
+      <div
+        style={{
+          backgroundColor: "#FFFFFF",
+          borderBottom: "1px solid #EEEEEE",
+        }}
+      >
         <div className="max-w-[1200px] mx-auto px-4 py-4">
-          <h1 className="font-semibold" style={{ color: "#333333", fontSize: "22px" }}>
+          <h1
+            className="font-semibold"
+            style={{ color: "#333333", fontSize: "22px" }}
+          >
             {loading
               ? "Loading internships..."
               : `${filtered.length} Total Internships`}
