@@ -22,10 +22,20 @@ export default function Header() {
           justifyContent: "space-between",
         }}
       >
-        {/* Logo */}
-        <a href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px" }}>
-          {/* Paper plane icon SVG */}
-          <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Logo: icon stacked above text */}
+        <a
+          href="/"
+          style={{
+            textDecoration: "none",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            lineHeight: 1,
+          }}
+        >
+          {/* Paper plane icon */}
+          <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="40" height="40" rx="6" fill="#008BD1"/>
             <path d="M8 20L32 8L26 32L20 22L8 20Z" fill="white" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
             <path d="M20 22L32 8" stroke="#008BD1" strokeWidth="1.5"/>
@@ -34,18 +44,17 @@ export default function Header() {
             style={{
               fontFamily: "Arial, sans-serif",
               fontWeight: "700",
-              fontSize: "22px",
+              fontSize: "13px",
               color: "#333333",
-              letterSpacing: "-0.5px",
+              letterSpacing: "-0.3px",
             }}
           >
-            INTERN
-            <span style={{ color: "#008BD1" }}>SHALA</span>
+            INTERN<span style={{ color: "#008BD1" }}>SHALA</span>
           </span>
         </a>
 
-        {/* Nav Links */}
-        <nav style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        {/* Right side: Nav + Login */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
           {/* Internships - active */}
           <a
             href="#"
@@ -119,10 +128,11 @@ export default function Header() {
               <path d="M6 9l6 6 6-6"/>
             </svg>
           </a>
-        </nav>
 
-        {/* Login / Register */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Divider */}
+          <div style={{ width: "1px", height: "20px", backgroundColor: "#E0E0E0", margin: "0 4px" }} />
+
+          {/* Login / Register */}
           <a
             href="#"
             style={{
