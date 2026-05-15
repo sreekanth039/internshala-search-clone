@@ -160,7 +160,7 @@ export default function InternshipCard({ internship }) {
           <span className="text-xs text-gray-400">{posted_by_label}</span>
           {isEarlyApplicant && (
             <span className="text-xs text-yellow-600 font-medium flex items-center gap-1">
-              <span>¡</span> Be an eyarly applicant
+              * Be an early applicant
             </span>
           )}
         </div>
