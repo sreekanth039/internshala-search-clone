@@ -130,7 +130,7 @@ export default function InternshipCard({ internship }) {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth= {2}
+                strokeWidth={2}
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
@@ -160,7 +160,7 @@ export default function InternshipCard({ internship }) {
           <span className="text-xs text-gray-400">{posted_by_label}</span>
           {isEarlyApplicant && (
             <span className="text-xs text-yellow-600 font-medium flex items-center gap-1">
-              <span>ก</span> Be an eyarly applicant
+              <span>ยก</span> Be an eyarly applicant
             </span>
           )}
         </div>
