@@ -3,8 +3,10 @@
 import { useState } from "react";
 
 export default function FilterSidebar({ options, filters, onFilterChange, onClear }) {
-  const { durations = [] } = options;
+  const { durations = [], profiles = [], locations = [] } = options;
   const [showMore, setShowMore] = useState(false);
+  const [showProfileDD, setShowProfileDD] = useState(false);
+  const [showLocationDD, setShowLocationDD] = useState(false);
 
   const hasActiveFilters =
     filters.keyword ||
@@ -28,7 +30,35 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
     color: "#374151",
     outline: "none",
     boxSizing: "border-box",
+    backgroundColor: "#fff",
   };
+
+  const dropdownStyle = {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    border: "1px solid #D1D5DB",
+    borderRadius: "4px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+    zIndex: 999,
+    maxHeight: "200px",
+    overflowY: "auto",
+    marginTop: "2px",
+  };
+
+  const profileSuggestions = profiles
+    .filter((p) =>
+      !filters.profile || p.toLowerCase().includes(filters.profile.toLowerCase())
+    )
+    .slice(0, 8);
+
+  const locationSuggestions = locations
+    .filter((l) =>
+      !filters.location || l.toLowerCase().includes(filters.location.toLowerCase())
+    )
+    .slice(0, 8);
 
   return (
     <div
@@ -42,7 +72,12 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
           style={{ color: "#333333" }}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"
+            />
           </svg>
           Filters
         </h2>
@@ -57,7 +92,7 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
         )}
       </div>
 
-      {/* Keyword search */}
+      {/* Keyword */}
       <div className="mb-5">
         <label className="block text-sm font-medium mb-1.5" style={{ color: "#333333" }}>
           Keyword
@@ -66,43 +101,125 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
           type="text"
           value={filters.keyword || ""}
           onChange={(e) => onFilterChange("keyword", e.target.value)}
-          placeholder="e.g. Python, Marketing"
+          placeholder="e.g. Design, Mumbai, Infosys"
           style={inputStyle}
-          onFocus={(e) => { e.target.style.borderColor = "#006CB7"; e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)"; }}
-          onBlur={(e) => { e.target.style.borderColor = "#D1D5DB"; e.target.style.boxShadow = "none"; }}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#006CB7";
+            e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)";
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#D1D5DB";
+            e.target.style.boxShadow = "none";
+          }}
         />
       </div>
 
-      {/* Profile */}
-      <div className="mb-5">
+      {/* Profile with autocomplete dropdown */}
+      <div className="mb-5" style={{ position: "relative" }}>
         <label className="block text-sm font-medium mb-1.5" style={{ color: "#333333" }}>
           Profile
         </label>
         <input
           type="text"
           value={filters.profile}
-          onChange={(e) => onFilterChange("profile", e.target.value)}
+          onChange={(e) => {
+            onFilterChange("profile", e.target.value);
+            setShowProfileDD(true);
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#006CB7";
+            e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)";
+            setShowProfileDD(true);
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#D1D5DB";
+            e.target.style.boxShadow = "none";
+            setTimeout(() => setShowProfileDD(false), 150);
+          }}
           placeholder="e.g. Marketing"
           style={inputStyle}
-          onFocus={(e) => { e.target.style.borderColor = "#006CB7"; e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)"; }}
-          onBlur={(e) => { e.target.style.borderColor = "#D1D5DB"; e.target.style.boxShadow = "none"; }}
         />
+        {showProfileDD && profileSuggestions.length > 0 && (
+          <div style={dropdownStyle}>
+            {profileSuggestions.map((p) => (
+              <div
+                key={p}
+                style={{
+                  padding: "8px 12px",
+                  fontSize: "13px",
+                  color: "#374151",
+                  cursor: "pointer",
+                }}
+                onMouseDown={() => {
+                  onFilterChange("profile", p);
+                  setShowProfileDD(false);
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
+              >
+                {p}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Location */}
-      <div className="mb-5">
+      {/* Location with autocomplete dropdown */}
+      <div className="mb-5" style={{ position: "relative" }}>
         <label className="block text-sm font-medium mb-1.5" style={{ color: "#333333" }}>
           Location
         </label>
         <input
           type="text"
           value={filters.location}
-          onChange={(e) => onFilterChange("location", e.target.value)}
+          onChange={(e) => {
+            onFilterChange("location", e.target.value);
+            setShowLocationDD(true);
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#006CB7";
+            e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)";
+            setShowLocationDD(true);
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#D1D5DB";
+            e.target.style.boxShadow = "none";
+            setTimeout(() => setShowLocationDD(false), 150);
+          }}
           placeholder="e.g. Delhi"
           style={inputStyle}
-          onFocus={(e) => { e.target.style.borderColor = "#006CB7"; e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)"; }}
-          onBlur={(e) => { e.target.style.borderColor = "#D1D5DB"; e.target.style.boxShadow = "none"; }}
         />
+        {showLocationDD && locationSuggestions.length > 0 && (
+          <div style={dropdownStyle}>
+            {locationSuggestions.map((l) => (
+              <div
+                key={l}
+                style={{
+                  padding: "8px 12px",
+                  fontSize: "13px",
+                  color: "#374151",
+                  cursor: "pointer",
+                }}
+                onMouseDown={() => {
+                  onFilterChange("location", l);
+                  setShowLocationDD(false);
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
+              >
+                {l}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* WFH checkbox */}
@@ -115,7 +232,9 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
             className="w-4 h-4 rounded border-gray-300"
             style={{ accentColor: "#006CB7" }}
           />
-          <span className="text-sm" style={{ color: "#333333" }}>Work from home</span>
+          <span className="text-sm" style={{ color: "#333333" }}>
+            Work from home
+          </span>
         </label>
       </div>
 
@@ -129,17 +248,25 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
             className="w-4 h-4 rounded border-gray-300"
             style={{ accentColor: "#006CB7" }}
           />
-          <span className="text-sm" style={{ color: "#333333" }}>Part-time</span>
+          <span className="text-sm" style={{ color: "#333333" }}>
+            Part-time
+          </span>
         </label>
       </div>
 
-      {/* Stipend range — always visible */}
+      {/* Stipend range */}
       <div className="mb-5">
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm font-medium" style={{ color: "#333333" }}>
+          <label
+            className="block text-sm font-medium"
+            style={{ color: "#333333" }}
+          >
             Min. monthly stipend (₹)
           </label>
-          <span className="text-sm font-medium" style={{ color: "#006CB7" }}>
+          <span
+            className="text-sm font-medium"
+            style={{ color: "#006CB7" }}
+          >
             {stipendDisplay}
           </span>
         </div>
@@ -149,12 +276,11 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
           max={10000}
           step={500}
           value={stipendValue}
-          onChange={(e) => onFilterChange("minStipend", Number(e.target.value))}
+          onChange={(e) =>
+            onFilterChange("minStipend", Number(e.target.value))
+          }
           className="w-full cursor-pointer"
-          style={{
-            accentColor: "#006CB7",
-            height: "4px",
-          }}
+          style={{ accentColor: "#006CB7", height: "4px" }}
         />
         <div className="flex justify-between text-xs text-gray-400 mt-1">
           <span>₹ 0</span>
@@ -176,12 +302,20 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
         {showMore && (
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1.5" style={{ color: "#333333" }}>
+            <label
+              className="block text-sm font-medium mb-1.5"
+              style={{ color: "#333333" }}
+            >
               Max. duration (months)
             </label>
             <select
@@ -198,7 +332,9 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
             >
               <option value="">Any Duration</option>
               {durations.map((d) => (
-                <option key={d} value={d}>{d}</option>
+                <option key={d} value={d}>
+                  {d}
+                </option>
               ))}
             </select>
           </div>
