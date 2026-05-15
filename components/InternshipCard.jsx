@@ -1,5 +1,3 @@
-const LOGO_BASE_URL = "https://internshala-uploads.internshala.com/logo/";
-
 function formatStipend(stipend) {
   if (!stipend) return "Unpaid";
   return stipend.salary || "Unpaid";
@@ -22,7 +20,8 @@ export default function InternshipCard({ internship }) {
     is_ppo,
   } = internship;
 
-  const logoUrl = company_logo ? `${LOGO_BASE_URL}${company_logo}` : null;
+  // Use server-side proxy to bypass hotlink protection on Internshala's CDN
+  const logoUrl = company_logo ? `/api/logo?file=${company_logo}` : null;
 
   const locationText = work_from_home
     ? "Work from Home"
@@ -42,8 +41,10 @@ export default function InternshipCard({ internship }) {
       className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-[#006CB7]/20"
     >
       <div className="p-5">
+        {/* Top row: title + logo */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
+            {/* Badges */}
             <div className="flex flex-wrap items-center gap-2 mb-1">
               {is_ppo && (
                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
@@ -55,6 +56,11 @@ export default function InternshipCard({ internship }) {
                   Part time
                 </span>
               )}
+              {work_from_home && (
+                <span className="text-xs bg-blue-50 text-[#006CB7] px-2 py-0.5 rounded font-medium border border-[#006CB7]/20">
+                  Work from Home
+                </span>
+              )}
             </div>
             <h3 className="text-base font-semibold text-gray-900 hover:text-[#006CB7] leading-tight">
               {title}
@@ -62,6 +68,7 @@ export default function InternshipCard({ internship }) {
             <p className="text-sm text-gray-500 mt-0.5">{company_name}</p>
           </div>
 
+          {/* Company logo */}
           <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-md border border-gray-100 bg-gray-50 overflow-hidden">
             {logoUrl ? (
               <img
@@ -81,6 +88,7 @@ export default function InternshipCard({ internship }) {
           </div>
         </div>
 
+        {/* Details row */}
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600">
           <div className="flex items-center gap-1.5">
             <svg
@@ -156,13 +164,19 @@ export default function InternshipCard({ internship }) {
           </div>
         </div>
 
+        {/* Footer row: posted date + apply */}
         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-xs text-gray-400">{posted_by_label}</span>
-          {isEarlyApplicant && (
-            <span className="text-xs text-yellow-600 font-medium flex items-center gap-1">
-              * Be an early applicant
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400">{posted_by_label}</span>
+            {isEarlyApplicant && (
+              <span className="text-xs text-yellow-600 font-medium">
+                * Be an early applicant
+              </span>
+            )}
+          </div>
+          <span className="text-xs font-medium text-[#006CB7] border border-[#006CB7]/40 px-3 py-1 rounded hover:bg-blue-50 transition-colors">
+            Apply now
+          </span>
         </div>
       </div>
     </a>
