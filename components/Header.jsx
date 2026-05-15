@@ -1,44 +1,115 @@
+"use client";
+
+import Image from "next/image";
+
 export default function Header() {
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-14">
+    <header
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderBottom: "1px solid #E8E8E8",
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        height: "72px",
+      }}
+    >
+      <div
+        className="max-w-[1200px] mx-auto px-4 h-full flex items-center justify-between"
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-1">
+          <span
+            style={{
+              fontFamily: "Arial, sans-serif",
+              fontWeight: "700",
+              fontSize: "28px",
+              color: "#333333",
+              letterSpacing: "-1px",
+            }}
+          >
+            intern
+          </span>
+          <span
+            style={{
+              fontFamily: "Arial, sans-serif",
+              fontWeight: "700",
+              fontSize: "28px",
+              color: "#FFFFFF",
+              backgroundColor: "#FF8C00",
+              borderRadius: "4px",
+              padding: "0 4px",
+              letterSpacing: "-1px",
+            }}
+          >
+            shala
+          </span>
+        </div>
 
-          {/* Logo + Nav */}
-          <div className="flex items-center gap-8">
-            <a href="/" className="flex items-center text-xl font-bold tracking-tight">
-              <span className="text-[#FF6600]">i</span>
-              <span className="text-gray-800">nternshala</span>
+        {/* Nav Links */}
+        <nav className="hidden md:flex items-center gap-6">
+          {["Internships", "Jobs", "Courses", "Projects"].map((label) => (
+            <a
+              key={label}
+              href="#"
+              style={{
+                color: "#333333",
+                fontSize: "14px",
+                fontWeight: "500",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => (e.target.style.color = "#008BD1")}
+              onMouseLeave={(e) => (e.target.style.color = "#333333")}
+            >
+              {label}
             </a>
-            <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-gray-600">
-              <a
-                href="#"
-                className="text-[#006CB7] border-b-2 border-[#006CB7] px-3 py-4 inline-block"
-              >
-                Internships
-              </a>
-              <a href="#" className="hover:text-[#006CB7] px-3 py-4 inline-block">
-                Courses
-              </a>
-              <a href="#" className="hover:text-[#006CB7] px-3 py-4 inline-block">
-                Jobs
-              </a>
-            </nav>
-          </div>
+          ))}
+        </nav>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <button className="hidden md:block text-sm text-[#006CB7] border border-[#006CB7] font-medium px-3 py-1.5 rounded hover:bg-blue-50 transition-colors">
-              Post internship
-            </button>
-            <button className="text-sm text-gray-700 font-medium px-3 py-1.5 hover:text-[#006CB7]">
-              Login
-            </button>
-            <button className="text-sm bg-[#006CB7] text-white px-4 py-1.5 rounded font-medium hover:bg-[#005a9e] transition-colors">
-              Register
-            </button>
-          </div>
-
+        {/* CTA Buttons */}
+        <div className="flex items-center gap-3">
+          <a
+            href="#"
+            style={{
+              color: "#008BD1",
+              fontSize: "14px",
+              fontWeight: "600",
+              textDecoration: "none",
+              border: "1px solid #008BD1",
+              borderRadius: "4px",
+              padding: "7px 16px",
+            }}
+          >
+            Login
+          </a>
+          <a
+            href="#"
+            style={{
+              backgroundColor: "#008BD1",
+              color: "#FFFFFF",
+              fontSize: "14px",
+              fontWeight: "600",
+              textDecoration: "none",
+              borderRadius: "4px",
+              padding: "8px 16px",
+            }}
+          >
+            Register
+          </a>
+          <a
+            href="#"
+            style={{
+              backgroundColor: "#FF8C00",
+              color: "#FFFFFF",
+              fontSize: "13px",
+              fontWeight: "600",
+              textDecoration: "none",
+              borderRadius: "4px",
+              padding: "8px 14px",
+            }}
+          >
+            For employers
+          </a>
         </div>
       </div>
     </header>
