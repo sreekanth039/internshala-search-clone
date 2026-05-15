@@ -10,6 +10,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
+    keyword: "",
     profile: "",
     location: "",
     duration: "",
@@ -46,6 +47,15 @@ export default function Home() {
 
   const filtered = useMemo(() => {
     return internships.filter((item) => {
+      if (filters.keyword) {
+        const kw = filters.keyword.toLowerCase();
+        const inTitle = item.title?.toLowerCase().includes(kw);
+        const inProfile = item.profile_name?.toLowerCase().includes(kw);
+        const inSkills = (item.skill_criteria || []).some((s) =>
+          s.toLowerCase().includes(kw)
+        );
+        if (!inTitle && !inProfile && !inSkills) return false;
+      }
       if (
         filters.profile &&
         !item.profile_name?.toLowerCase().includes(filters.profile.toLowerCase()) &&
@@ -78,6 +88,7 @@ export default function Home() {
 
   const clearFilters = () => {
     setFilters({
+      keyword: "",
       profile: "",
       location: "",
       duration: "",
@@ -91,7 +102,6 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: "#F5F5F5" }}>
       <Header />
 
-      {/* Page header bar */}
       <div style={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #EEEEEE" }}>
         <div className="max-w-[1200px] mx-auto px-4 py-4">
           <h1 className="font-semibold" style={{ color: "#333333", fontSize: "22px" }}>
@@ -107,7 +117,6 @@ export default function Home() {
 
       <main className="max-w-[1200px] mx-auto px-4 py-6">
         <div className="flex gap-6 items-start">
-          {/* Sidebar */}
           <aside className="w-72 flex-shrink-0 sticky top-20">
             <FilterSidebar
               options={filterOptions}
@@ -117,7 +126,6 @@ export default function Home() {
             />
           </aside>
 
-          {/* Results */}
           <section className="flex-1">
             {loading && (
               <div className="flex flex-col gap-4">
