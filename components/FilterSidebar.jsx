@@ -2,10 +2,10 @@
 
 const STIPEND_OPTIONS = [
   { label: "Any", value: 0 },
-  { label: "¹2,000+", value: 2000 },
-  { label: "¹5,000+", value: 5000 },
-  { label: "¹10,000+", value: 10000 },
-  { label: "¹20,000+", value: 20000 },
+  { label: "Rs. 2,000+", value: 2000 },
+  { label: "Rs. 5,000+", value: 5000 },
+  { label: "Rs. 10,000+", value: 10000 },
+  { label: "Rs. 20,000+", value: 20000 },
 ];
 
 export default function FilterSidebar({
