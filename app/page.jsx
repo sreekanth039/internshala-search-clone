@@ -27,8 +27,7 @@ export default function Home() {
         const data = await res.json();
         const ids = data.internship_ids || [];
         const meta = data.internships_meta || {};
-        const list = ids.map((id) => meta[id]).filter(Boolean);
-        setInternships(list);
+        setInternships(ids.map((id) => meta[id]).filter(Boolean));
       } catch (err) {
         setError("Could not load internships. Please try again later.");
       } finally {
@@ -39,16 +38,10 @@ export default function Home() {
   }, []);
 
   const filterOptions = useMemo(() => {
-    const durations = [
-      ...new Set(internships.map((i) => i.duration).filter(Boolean)),
-    ].sort();
-    const profiles = [
-      ...new Set(internships.map((i) => i.profile_name).filter(Boolean)),
-    ].sort();
+    const durations = [...new Set(internships.map((i) => i.duration).filter(Boolean))].sort();
+    const profiles = [...new Set(internships.map((i) => i.profile_name).filter(Boolean))].sort();
     const locations = [
-      ...new Set(
-        internships.flatMap((i) => i.location_names || []).filter(Boolean)
-      ),
+      ...new Set(internships.flatMap((i) => i.location_names || []).filter(Boolean)),
     ].sort();
     return { durations, profiles, locations };
   }, [internships]);
@@ -57,17 +50,20 @@ export default function Home() {
     return internships.filter((item) => {
       if (filters.keyword) {
         const kw = filters.keyword.toLowerCase();
-        const inTitle = item.title?.toLowerCase().includes(kw);
-        const inProfile = item.profile_name?.toLowerCase().includes(kw);
-        const inCompany = item.company_name?.toLowerCase().includes(kw);
-        if (!inTitle && !inProfile && !inCompany) return false;
+        const matches =
+          item.title?.toLowerCase().includes(kw) ||
+          item.profile_name?.toLowerCase().includes(kw) ||
+          item.company_name?.toLowerCase().includes(kw);
+        if (!matches) return false;
       }
+
       if (
         filters.profile &&
         !item.profile_name?.toLowerCase().includes(filters.profile.toLowerCase()) &&
         !item.title?.toLowerCase().includes(filters.profile.toLowerCase())
       )
         return false;
+
       if (
         filters.location &&
         !(item.location_names || []).some((l) =>
@@ -76,23 +72,27 @@ export default function Home() {
         !item.work_from_home
       )
         return false;
+
       if (filters.duration && item.duration !== filters.duration) return false;
+
       if (
         filters.minStipend > 0 &&
         (item.stipend?.salaryValue1 || 0) < filters.minStipend
       )
         return false;
+
       if (filters.wfh && !item.work_from_home) return false;
       if (filters.partTime && !item.part_time) return false;
+
       return true;
     });
   }, [internships, filters]);
 
-  const handleFilterChange = (key, value) => {
+  function handleFilterChange(key, value) {
     setFilters((prev) => ({ ...prev, [key]: value }));
-  };
+  }
 
-  const clearFilters = () => {
+  function clearFilters() {
     setFilters({
       keyword: "",
       profile: "",
@@ -102,32 +102,11 @@ export default function Home() {
       wfh: false,
       partTime: false,
     });
-  };
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F5F5F5" }}>
       <Header />
-
-      <div
-        style={{
-          backgroundColor: "#FFFFFF",
-          borderBottom: "1px solid #EEEEEE",
-        }}
-      >
-        <div className="max-w-[1200px] mx-auto px-4 py-4">
-          <h1
-            className="font-semibold"
-            style={{ color: "#333333", fontSize: "22px" }}
-          >
-            {loading
-              ? "Loading internships..."
-              : `${filtered.length} Total Internships`}
-          </h1>
-          <p style={{ color: "#888888", fontSize: "13px", marginTop: "2px" }}>
-            Latest Internships in India
-          </p>
-        </div>
-      </div>
 
       <main className="max-w-[1200px] mx-auto px-4 py-6">
         <div className="flex gap-6 items-start">
@@ -141,6 +120,21 @@ export default function Home() {
           </aside>
 
           <section className="flex-1">
+            <div
+              className="mb-4 pb-4"
+              style={{ borderBottom: "1px solid #EEEEEE" }}
+            >
+              <h1
+                className="font-semibold"
+                style={{ color: "#333333", fontSize: "22px" }}
+              >
+                {loading ? "Loading internships..." : `${filtered.length} Total Internships`}
+              </h1>
+              <p style={{ color: "#888888", fontSize: "13px", marginTop: "2px" }}>
+                Latest Internships in India
+              </p>
+            </div>
+
             {loading && (
               <div className="flex flex-col gap-4">
                 {[...Array(5)].map((_, i) => (
@@ -152,11 +146,13 @@ export default function Home() {
                 ))}
               </div>
             )}
+
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
                 {error}
               </div>
             )}
+
             {!loading && !error && filtered.length === 0 && (
               <div
                 className="bg-white rounded-lg p-10 text-center"
@@ -165,6 +161,7 @@ export default function Home() {
                 No internships match your filters. Try clearing some filters.
               </div>
             )}
+
             {!loading && !error && (
               <div className="flex flex-col gap-4">
                 {filtered.map((internship) => (
