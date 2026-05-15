@@ -2,11 +2,106 @@
 
 import { useState } from "react";
 
+const DURATIONS = ["1 Month", "2 Months", "3 Months", "4 Months", "5 Months", "6 Months"];
+
+function FilterSection({ title, children }) {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <div style={{ borderBottom: "1px solid #EEEEEE", padding: "16px 0" }}>
+      <button
+        className="w-full flex justify-between items-center"
+        onClick={() => setOpen(!open)}
+        style={{ background: "none", border: "none", cursor: "pointer" }}
+      >
+        <span style={{ fontWeight: 600, fontSize: "14px", color: "#333333" }}>
+          {title}
+        </span>
+        <span style={{ fontSize: "18px", color: "#666666", lineHeight: 1 }}>
+          {open ? "−" : "+"}
+        </span>
+      </button>
+      {open && <div style={{ marginTop: "12px" }}>{children}</div>}
+    </div>
+  );
+}
+
+function AutocompleteInput({ placeholder, value, onChange, suggestions }) {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filtered = suggestions.filter(
+    (s) => s.toLowerCase().includes(value.toLowerCase()) && s !== value
+  );
+
+  function handleSelect(item) {
+    onChange(item);
+    setShowDropdown(false);
+  }
+
+  return (
+    <div style={{ position: "relative" }}>
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setShowDropdown(true);
+        }}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #DDDDDD",
+          borderRadius: "4px",
+          fontSize: "13px",
+          color: "#333333",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+      {showDropdown && filtered.length > 0 && (
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            backgroundColor: "#fff",
+            border: "1px solid #DDDDDD",
+            borderRadius: "4px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            zIndex: 100,
+            maxHeight: "200px",
+            overflowY: "auto",
+          }}
+        >
+          {filtered.slice(0, 8).map((item, i) => (
+            <div
+              key={i}
+              onMouseDown={() => handleSelect(item)}
+              style={{
+                padding: "9px 12px",
+                fontSize: "13px",
+                color: "#333333",
+                cursor: "pointer",
+                borderBottom: "1px solid #F5F5F5",
+              }}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#F0F7FF")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FilterSidebar({ options, filters, onFilterChange, onClear }) {
-  const { durations = [], profiles = [], locations = [] } = options;
-  const [showMore, setShowMore] = useState(false);
-  const [showProfileDD, setShowProfileDD] = useState(false);
-  const [showLocationDD, setShowLocationDD] = useState(false);
+  const { profiles = [], locations = [], durations = DURATIONS } = options || {};
 
   const hasActiveFilters =
     filters.keyword ||
@@ -17,359 +112,159 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
     filters.wfh ||
     filters.partTime;
 
-  const stipendValue = filters.minStipend || 0;
-  const stipendDisplay =
-    stipendValue === 0 ? "₹ 0" : `₹ ${stipendValue.toLocaleString("en-IN")}+`;
-
-  const inputStyle = {
-    width: "100%",
-    border: "1px solid #D1D5DB",
-    borderRadius: "4px",
-    padding: "8px 12px",
-    fontSize: "13px",
-    color: "#374151",
-    outline: "none",
-    boxSizing: "border-box",
-    backgroundColor: "#fff",
-  };
-
-  const dropdownStyle = {
-    position: "absolute",
-    top: "100%",
-    left: 0,
-    right: 0,
-    backgroundColor: "#fff",
-    border: "1px solid #D1D5DB",
-    borderRadius: "4px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-    zIndex: 999,
-    maxHeight: "200px",
-    overflowY: "auto",
-    marginTop: "2px",
-  };
-
-  const profileSuggestions = profiles
-    .filter((p) =>
-      !filters.profile || p.toLowerCase().includes(filters.profile.toLowerCase())
-    )
-    .slice(0, 8);
-
-  const locationSuggestions = locations
-    .filter((l) =>
-      !filters.location || l.toLowerCase().includes(filters.location.toLowerCase())
-    )
-    .slice(0, 8);
-
   return (
-    <>
-      {/* Main filter card */}
-      <div
-        className="bg-white rounded-lg p-5 mb-4"
-        style={{ border: "1px solid #E0E0E0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <h2
-            className="font-semibold text-base flex items-center gap-2"
-            style={{ color: "#333333" }}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"
-              />
-            </svg>
-            Filters
-          </h2>
-          {hasActiveFilters && (
-            <button
-              onClick={onClear}
-              className="text-xs font-medium hover:underline"
-              style={{ color: "#006CB7" }}
-            >
-              Clear all
-            </button>
-          )}
-        </div>
-
-        {/* Profile with autocomplete */}
-        <div className="mb-5" style={{ position: "relative" }}>
-          <label className="block text-sm font-medium mb-1.5" style={{ color: "#333333" }}>
-            Profile
-          </label>
-          <input
-            type="text"
-            value={filters.profile}
-            onChange={(e) => {
-              onFilterChange("profile", e.target.value);
-              setShowProfileDD(true);
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#006CB7";
-              e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)";
-              setShowProfileDD(true);
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#D1D5DB";
-              e.target.style.boxShadow = "none";
-              setTimeout(() => setShowProfileDD(false), 150);
-            }}
-            placeholder="e.g. Marketing"
-            style={inputStyle}
-          />
-          {showProfileDD && profileSuggestions.length > 0 && (
-            <div style={dropdownStyle}>
-              {profileSuggestions.map((p) => (
-                <div
-                  key={p}
-                  style={{
-                    padding: "8px 12px",
-                    fontSize: "13px",
-                    color: "#374151",
-                    cursor: "pointer",
-                  }}
-                  onMouseDown={() => {
-                    onFilterChange("profile", p);
-                    setShowProfileDD(false);
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#EFF6FF")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "transparent")
-                  }
-                >
-                  {p}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Location with autocomplete */}
-        <div className="mb-5" style={{ position: "relative" }}>
-          <label className="block text-sm font-medium mb-1.5" style={{ color: "#333333" }}>
-            Location
-          </label>
-          <input
-            type="text"
-            value={filters.location}
-            onChange={(e) => {
-              onFilterChange("location", e.target.value);
-              setShowLocationDD(true);
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#006CB7";
-              e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)";
-              setShowLocationDD(true);
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#D1D5DB";
-              e.target.style.boxShadow = "none";
-              setTimeout(() => setShowLocationDD(false), 150);
-            }}
-            placeholder="e.g. Delhi"
-            style={inputStyle}
-          />
-          {showLocationDD && locationSuggestions.length > 0 && (
-            <div style={dropdownStyle}>
-              {locationSuggestions.map((l) => (
-                <div
-                  key={l}
-                  style={{
-                    padding: "8px 12px",
-                    fontSize: "13px",
-                    color: "#374151",
-                    cursor: "pointer",
-                  }}
-                  onMouseDown={() => {
-                    onFilterChange("location", l);
-                    setShowLocationDD(false);
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#EFF6FF")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "transparent")
-                  }
-                >
-                  {l}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* WFH checkbox */}
-        <div className="mb-3">
-          <label className="flex items-center gap-2.5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filters.wfh || false}
-              onChange={(e) => onFilterChange("wfh", e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300"
-              style={{ accentColor: "#006CB7" }}
-            />
-            <span className="text-sm" style={{ color: "#333333" }}>
-              Work from home
-            </span>
-          </label>
-        </div>
-
-        {/* Part-time checkbox */}
-        <div className="mb-5">
-          <label className="flex items-center gap-2.5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filters.partTime || false}
-              onChange={(e) => onFilterChange("partTime", e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300"
-              style={{ accentColor: "#006CB7" }}
-            />
-            <span className="text-sm" style={{ color: "#333333" }}>
-              Part-time
-            </span>
-          </label>
-        </div>
-
-        {/* Stipend range */}
-        <div className="mb-5">
-          <div className="flex items-center justify-between mb-2">
-            <label
-              className="block text-sm font-medium"
-              style={{ color: "#333333" }}
-            >
-              Desired minimum monthly stipend (₹)
-            </label>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={10000}
-            step={500}
-            value={stipendValue}
-            onChange={(e) =>
-              onFilterChange("minStipend", Number(e.target.value))
-            }
-            className="w-full cursor-pointer"
-            style={{ accentColor: "#006CB7", height: "4px" }}
-          />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>₹ 0</span>
-            <span>₹ 10,000+</span>
-          </div>
-        </div>
-
-        {/* View more: Duration */}
-        <div>
+    <div
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderRadius: "8px",
+        border: "1px solid #E0E0E0",
+        padding: "16px",
+      }}
+    >
+      <div className="flex justify-between items-center" style={{ marginBottom: "8px" }}>
+        <h2 style={{ fontWeight: 700, fontSize: "15px", color: "#333333" }}>Filters</h2>
+        {hasActiveFilters && (
           <button
-            onClick={() => setShowMore(!showMore)}
-            className="text-sm font-medium flex items-center gap-1 hover:underline mb-3"
-            style={{ color: "#006CB7" }}
-          >
-            {showMore ? "View less filters" : "View more filters"}
-            <svg
-              className={`w-4 h-4 transition-transform ${showMore ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-          {showMore && (
-            <div className="mb-4">
-              <label
-                className="block text-sm font-medium mb-1.5"
-                style={{ color: "#333333" }}
-              >
-                Max. duration (months)
-              </label>
-              <select
-                value={filters.duration}
-                onChange={(e) => onFilterChange("duration", e.target.value)}
-                style={{
-                  ...inputStyle,
-                  appearance: "none",
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 10px center",
-                  paddingRight: "30px",
-                }}
-              >
-                <option value="">Any Duration</option>
-                {durations.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Keyword Search — separate card at the bottom, matching Internshala layout */}
-      <div
-        className="bg-white rounded-lg p-5"
-        style={{ border: "1px solid #E0E0E0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
-      >
-        <h3
-          className="font-semibold text-sm mb-3 text-center"
-          style={{ color: "#333333" }}
-        >
-          Keyword Search
-        </h3>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={filters.keyword || ""}
-            onChange={(e) => onFilterChange("keyword", e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && onFilterChange("keyword", e.target.value)}
-            placeholder="e.g. Design, Mumbai, Infosys"
-            style={{ ...inputStyle, flex: 1 }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#006CB7";
-              e.target.style.boxShadow = "0 0 0 2px rgba(0,108,183,0.15)";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#D1D5DB";
-              e.target.style.boxShadow = "none";
-            }}
-          />
-          <button
-            onClick={() => onFilterChange("keyword", filters.keyword || "")}
+            onClick={onClear}
             style={{
-              backgroundColor: "#008BD1",
-              color: "#fff",
+              fontSize: "12px",
+              color: "#008BD1",
+              background: "none",
               border: "none",
-              borderRadius: "4px",
-              padding: "8px 14px",
               cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
+              fontWeight: 600,
             }}
           >
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"
-              />
-            </svg>
+            Clear all
           </button>
-        </div>
+        )}
       </div>
-    </>
+
+      <FilterSection title="Profile">
+        <AutocompleteInput
+          placeholder="e.g. Web Development"
+          value={filters.profile}
+          onChange={(val) => onFilterChange("profile", val)}
+          suggestions={profiles}
+        />
+      </FilterSection>
+
+      <FilterSection title="Location">
+        <AutocompleteInput
+          placeholder="e.g. Delhi, Mumbai"
+          value={filters.location}
+          onChange={(val) => onFilterChange("location", val)}
+          suggestions={locations}
+        />
+        <label
+          className="flex items-center gap-2"
+          style={{ marginTop: "10px", cursor: "pointer", fontSize: "13px", color: "#444" }}
+        >
+          <input
+            type="checkbox"
+            checked={filters.wfh}
+            onChange={(e) => onFilterChange("wfh", e.target.checked)}
+            style={{ accentColor: "#008BD1", width: "15px", height: "15px" }}
+          />
+          Work From Home
+        </label>
+        <label
+          className="flex items-center gap-2"
+          style={{ marginTop: "8px", cursor: "pointer", fontSize: "13px", color: "#444" }}
+        >
+          <input
+            type="checkbox"
+            checked={filters.partTime}
+            onChange={(e) => onFilterChange("partTime", e.target.checked)}
+            style={{ accentColor: "#008BD1", width: "15px", height: "15px" }}
+          />
+          Part-time
+        </label>
+      </FilterSection>
+
+      <FilterSection title="Duration">
+        {durations.map((d) => (
+          <label
+            key={d}
+            className="flex items-center gap-2"
+            style={{ marginBottom: "8px", cursor: "pointer", fontSize: "13px", color: "#444" }}
+          >
+            <input
+              type="radio"
+              name="duration"
+              checked={filters.duration === d}
+              onChange={() =>
+                onFilterChange("duration", filters.duration === d ? "" : d)
+              }
+              style={{ accentColor: "#008BD1", width: "15px", height: "15px" }}
+            />
+            {d}
+          </label>
+        ))}
+      </FilterSection>
+
+      <FilterSection title="Stipend">
+        <div style={{ marginBottom: "6px" }}>
+          <span style={{ fontSize: "13px", color: "#555555" }}>
+            Minimum monthly stipend
+          </span>
+          <span
+            style={{
+              display: "block",
+              fontSize: "18px",
+              fontWeight: 700,
+              color: "#008BD1",
+              marginTop: "4px",
+            }}
+          >
+            ₹ {filters.minStipend.toLocaleString("en-IN")}
+            {filters.minStipend >= 10000 ? "+" : ""}
+          </span>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={10000}
+          step={1000}
+          value={filters.minStipend}
+          onChange={(e) => onFilterChange("minStipend", Number(e.target.value))}
+          style={{
+            width: "100%",
+            accentColor: "#008BD1",
+            cursor: "pointer",
+            marginTop: "6px",
+          }}
+        />
+        <div
+          className="flex justify-between"
+          style={{ fontSize: "11px", color: "#999999", marginTop: "4px" }}
+        >
+          <span>₹ 0</span>
+          <span>₹ 10,000+</span>
+        </div>
+      </FilterSection>
+
+      <FilterSection title="Keyword Search">
+        <input
+          type="text"
+          placeholder="e.g. React, Marketing..."
+          value={filters.keyword}
+          onChange={(e) => onFilterChange("keyword", e.target.value)}
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: "1px solid #DDDDDD",
+            borderRadius: "4px",
+            fontSize: "13px",
+            color: "#333333",
+            boxSizing: "border-box",
+            outline: "none",
+          }}
+        />
+        <p style={{ fontSize: "11px", color: "#AAAAAA", marginTop: "6px" }}>
+          Search by role, company, or skill
+        </p>
+      </FilterSection>
+    </div>
   );
 }
