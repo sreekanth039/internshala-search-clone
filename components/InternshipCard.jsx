@@ -20,56 +20,83 @@ export default function InternshipCard({ internship }) {
     is_ppo,
   } = internship;
 
-  // Use server-side proxy to bypass hotlink protection on Internshala's CDN
   const logoUrl = company_logo ? `/api/logo?file=${company_logo}` : null;
-
   const locationText = work_from_home
     ? "Work from Home"
     : location_names?.join(", ") || "Multiple Locations";
-
   const isEarlyApplicant = posted_by_label_type === "success";
-
-  const internshipUrl = url
-    ? `https://internshala.com/internship/detail/${url}`
-    : "#";
+  const internshipUrl = url ? `https://internshala.com/internship/detail/${url}` : "#";
 
   return (
     <a
       href={internshipUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-[#006CB7]/20"
+      className="block bg-white rounded-lg"
+      style={{ border: "1px solid #E0E0E0", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.12)";
+        e.currentTarget.style.borderColor = "#A0D7F0";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+        e.currentTarget.style.borderColor = "#E0E0E0";
+      }}
     >
       <div className="p-5">
         {/* Top row: title + logo */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2 mb-1">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
               {is_ppo && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-medium">
-                  With job offer
+                <span
+                  className="font-medium rounded"
+                  style={{ fontSize: "11px", padding: "2px 8px", backgroundColor: "#FFF8E1", color: "#856404" }}
+                >
+                  Job offer
                 </span>
               )}
               {part_time && (
-                <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded font-medium">
+                <span
+                  className="font-medium rounded"
+                  style={{ fontSize: "11px", padding: "2px 8px", backgroundColor: "#F5F5F5", color: "#555555", border: "1px solid #E0E0E0" }}
+                >
                   Part time
                 </span>
               )}
               {work_from_home && (
-                <span className="text-xs bg-blue-50 text-[#006CB7] px-2 py-0.5 rounded font-medium border border-[#006CB7]/20">
+                <span
+                  className="font-medium rounded"
+                  style={{ fontSize: "11px", padding: "2px 8px", backgroundColor: "#EBF5FB", color: "#006CB7", border: "1px solid #BCDFF7" }}
+                >
                   Work from Home
                 </span>
               )}
             </div>
-            <h3 className="text-base font-semibold text-gray-900 hover:text-[#006CB7] leading-tight">
+
+            <h3
+              className="font-semibold leading-snug hover:underline"
+              style={{ color: "#008BD1", fontSize: "16px" }}
+            >
               {title}
             </h3>
-            <p className="text-sm text-gray-500 mt-0.5">{company_name}</p>
+            <p style={{ color: "#666666", fontSize: "13px", marginTop: "2px" }}>
+              {company_name}
+            </p>
           </div>
 
           {/* Company logo */}
-          <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-md border border-gray-100 bg-gray-50 overflow-hidden">
+          <div
+            className="flex-shrink-0 flex items-center justify-center overflow-hidden"
+            style={{
+              width: "48px",
+              height: "48px",
+              border: "1px solid #E0E0E0",
+              backgroundColor: "#F9F9F9",
+              borderRadius: "6px",
+            }}
+          >
             {logoUrl ? (
               <img
                 src={logoUrl}
@@ -77,106 +104,63 @@ export default function InternshipCard({ internship }) {
                 className="w-full h-full object-contain p-1"
                 onError={(e) => {
                   e.target.style.display = "none";
-                  e.target.parentElement.innerHTML = `<span class="text-xl font-bold text-gray-300">${company_name?.[0]?.toUpperCase() || "?"}</span>`;
+                  e.target.parentElement.innerHTML = `<span style="font-size:16px;font-weight:700;color:#CCCCCC">${company_name?.[0]?.toUpperCase() || "?"}</span>`;
                 }}
               />
             ) : (
-              <span className="text-xl font-bold text-gray-300">
+              <span style={{ fontSize: "16px", fontWeight: "700", color: "#CCCCCC" }}>
                 {company_name?.[0]?.toUpperCase() || "?"}
               </span>
             )}
           </div>
         </div>
 
-        {/* Details row */}
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600">
+        {/* Detail rows */}
+        <div
+          className="mt-3 flex flex-wrap"
+          style={{ gap: "8px 20px", fontSize: "13px", color: "#555555" }}
+        >
           <div className="flex items-center gap-1.5">
-            <svg
-              className="w-4 h-4 text-gray-400 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-              />
+            <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#999" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span>{locationText}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <svg
-              className="w-4 h-4 text-gray-400 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
+            <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#999" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span>{start_date}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <svg
-              className="w-4 h-4 text-gray-400 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+            <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#999" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{duration}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <svg
-              className="w-4 h-4 text-gray-400 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+            <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#999" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="font-medium text-gray-800">
-              {formatStipend(stipend)}
-            </span>
+            <span style={{ fontWeight: "500", color: "#333333" }}>{formatStipend(stipend)}</span>
           </div>
         </div>
 
-        {/* Footer row: posted date + apply */}
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">{posted_by_label}</span>
-            {isEarlyApplicant && (
-              <span className="text-xs text-yellow-600 font-medium">
-                * Be an early applicant
-              </span>
-            )}
-          </div>
-          <span className="text-xs font-medium text-[#006CB7] border border-[#006CB7]/40 px-3 py-1 rounded hover:bg-blue-50 transition-colors">
-            Apply now
-          </span>
+        {/* Footer row */}
+        <div
+          className="mt-3 pt-3 flex items-center justify-between"
+          style={{ borderTop: "1px solid #F0F0F0" }}
+        >
+          <span style={{ fontSize: "12px", color: "#999999" }}>{posted_by_label}</span>
+          {isEarlyApplicant && (
+            <span className="flex items-center gap-1" style={{ fontSize: "12px", color: "#FF8C00", fontWeight: "500" }}>
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+              </svg>
+              Be an early applicant
+            </span>
+          )}
         </div>
       </div>
     </a>
