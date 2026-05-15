@@ -243,12 +243,6 @@ export default function FilterSidebar({ options, filters, onFilterChange, onClea
             >
               Desired minimum monthly stipend (₹)
             </label>
-            <span
-              className="text-sm font-medium"
-              style={{ color: "#006CB7" }}
-            >
-              {stipendDisplay}
-            </span>
           </div>
           <input
             type="range"
