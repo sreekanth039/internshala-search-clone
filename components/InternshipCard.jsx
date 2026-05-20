@@ -30,12 +30,10 @@ export default function InternshipCard({ internship }) {
     ? `https://internshala.com/internship/detail/${url}`
     : "#";
 
-  // Build skills array safely
   const skills = Array.isArray(skill_requirements)
     ? skill_requirements.slice(0, 5)
     : [];
 
-  // Truncate description to ~2 lines (~160 chars)
   const descText =
     typeof description === "string"
       ? description.replace(/<[^>]+>/g, "").trim().slice(0, 180) +
@@ -63,10 +61,8 @@ export default function InternshipCard({ internship }) {
       }}
     >
       <div className="p-4 sm:p-5">
-        {/* Top row: title + logo */}
         <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div className="flex-1">
-            {/* Badges row */}
             <div className="flex flex-wrap items-center gap-2 mb-2">
               {is_ppo && (
                 <span
@@ -129,7 +125,6 @@ export default function InternshipCard({ internship }) {
             </p>
           </div>
 
-          {/* Company logo */}
           <div
             className="flex-shrink-0 flex items-center justify-center overflow-hidden"
             style={{
@@ -166,7 +161,6 @@ export default function InternshipCard({ internship }) {
           </div>
         </div>
 
-        {/* Detail row: location, duration, stipend */}
         <div
           className="mt-3 flex flex-wrap"
           style={{ gap: "8px 20px", fontSize: "13px", color: "#555555" }}
@@ -234,7 +228,6 @@ export default function InternshipCard({ internship }) {
           </div>
         </div>
 
-        {/* Description snippet */}
         {descText && (
           <p
             style={{
@@ -248,7 +241,6 @@ export default function InternshipCard({ internship }) {
           </p>
         )}
 
-        {/* Skills chips */}
         {skills.length > 0 && (
           <div
             className="flex flex-wrap gap-1.5"
@@ -272,7 +264,6 @@ export default function InternshipCard({ internship }) {
           </div>
         )}
 
-        {/* Footer row */}
         <div
           className="mt-3 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
           style={{ borderTop: "1px solid #F0F0F0" }}
