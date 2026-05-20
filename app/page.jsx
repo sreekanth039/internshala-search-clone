@@ -9,6 +9,7 @@ export default function Home() {
   const [internships, setInternships] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [filters, setFilters] = useState({
     keyword: "",
     profile: "",
@@ -108,25 +109,38 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: "#F5F5F5" }}>
       <Header />
 
-      <main className="max-w-[1200px] mx-auto px-4 py-6">
-        <div className="flex gap-6 items-start">
-          <aside className="w-72 flex-shrink-0 sticky top-20">
+      <main className="max-w-[1200px] mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <div className="md:hidden mb-3">
+          <button
+            onClick={() => setShowMobileFilters((prev) => !prev)}
+            className="w-full bg-white rounded-lg border px-4 py-2.5 text-sm font-semibold"
+            style={{ borderColor: "#E0E0E0", color: "#333333" }}
+          >
+            {showMobileFilters ? "Hide filters" : "Show filters"}
+          </button>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
+          <aside className={`${showMobileFilters ? "block" : "hidden"} md:block w-full md:w-72 md:flex-shrink-0 md:sticky md:top-20`}>
             <FilterSidebar
               options={filterOptions}
               filters={filters}
               onFilterChange={handleFilterChange}
-              onClear={clearFilters}
+              onClear={() => {
+                clearFilters();
+                setShowMobileFilters(false);
+              }}
             />
           </aside>
 
-          <section className="flex-1">
+          <section className="w-full flex-1">
             <div
               className="mb-4 pb-4"
               style={{ borderBottom: "1px solid #EEEEEE" }}
             >
               <h1
-                className="font-semibold"
-                style={{ color: "#333333", fontSize: "22px" }}
+                className="font-semibold text-[20px] sm:text-[22px]"
+                style={{ color: "#333333" }}
               >
                 {loading ? "Loading internships..." : `${filtered.length} Total Internships`}
               </h1>
