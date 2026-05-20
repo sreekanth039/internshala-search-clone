@@ -1,5 +1,3 @@
-import BrandWordmark from "@/components/BrandWordmark";
-
 export default function Footer() {
   return (
     <footer style={{ backgroundColor: "#1A1A1A", color: "#999999" }}>
@@ -124,7 +122,11 @@ export default function Footer() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-            <BrandWordmark dark className="w-[140px] h-auto" />
+            <img
+              src="/image.png"
+              alt="Internshala"
+              className="w-[130px] h-auto"
+            />
           </div>
 
           <p style={{ fontSize: "11px", color: "#666666", textAlign: "center" }}>
