@@ -62,9 +62,9 @@ export default function InternshipCard({ internship }) {
         e.currentTarget.style.borderColor = "#E0E0E0";
       }}
     >
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         {/* Top row: title + logo */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div className="flex-1">
             {/* Badges row */}
             <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -274,7 +274,7 @@ export default function InternshipCard({ internship }) {
 
         {/* Footer row */}
         <div
-          className="mt-3 pt-3 flex items-center justify-between"
+          className="mt-3 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
           style={{ borderTop: "1px solid #F0F0F0" }}
         >
           <span style={{ fontSize: "12px", color: "#999999" }}>
